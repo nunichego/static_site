@@ -29,11 +29,22 @@ class LeafNode(HTMLNode):
     
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
-        super().__init__(tag, None, children, props)
-        if self.tag is None:
+        if tag is None:
             raise ValueError("tag is missing")
         if children is None:
             raise ValueError("children parameter value is missing")
+        super().__init__(tag, None, children, props)
         
     def to_html(self):
-        
+        if self.tag is None:
+            raise ValueError("tag is missing")
+        if self.children is None:
+            raise ValueError("children parameter value is missing")
+        result = f"<{self.tag}{self.props_to_html()}>"
+        return result + "".join(
+            list(map(lambda x: x.to_html(),self.children))) + f"</{self.tag}>"
+    
+parent1 = ParentNode("div", [LeafNode(
+            "some text", "p")], {"class": "container", "id": "main"})
+    
+print(parent1.to_html())
