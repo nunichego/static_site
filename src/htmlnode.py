@@ -16,6 +16,16 @@ class HTMLNode:
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
     
+    def __eq__(self, other):
+        if not isinstance(other, HTMLNode):
+            return False
+        return (
+            self.tag == other.tag and
+            self.value == other.value and
+            self.children == other.children and
+            self.props == other.props
+        )
+    
 class LeafNode(HTMLNode):
     def __init__(self, value, tag=None, props=None):
         super().__init__(tag, value, None, props)
@@ -25,6 +35,8 @@ class LeafNode(HTMLNode):
     def to_html(self):
         if self.tag == None:
             return f"{self.value}"
+        if self.tag == "img":
+            return f'<{self.tag}{self.props_to_html()} />'
         return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
     
 class ParentNode(HTMLNode):
@@ -43,8 +55,3 @@ class ParentNode(HTMLNode):
         result = f"<{self.tag}{self.props_to_html()}>"
         return result + "".join(
             list(map(lambda x: x.to_html(),self.children))) + f"</{self.tag}>"
-    
-parent1 = ParentNode("div", [LeafNode(
-            "some text", "p")], {"class": "container", "id": "main"})
-    
-print(parent1.to_html())
