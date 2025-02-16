@@ -125,6 +125,20 @@ class TestDelimiter(unittest.TestCase):
         ]
         self.assertEqual(result, expected)
 
+    def test_markd_to_blocks(self):
+        markd_examp = " # This is a heading\n\nThis is a paragraph "\
+            "of text. It has some **bold** and *italic* words inside of"\
+                " it. \n\n* This is the first list item in a list block\n* "\
+                    "This is a list item\n* This is another list item"
+        expected = [
+            '# This is a heading',
+            'This is a paragraph of text. It has some **bold** and *italic* words inside of it.', 
+            '* This is the first list item in a list block\n* This is a list item\n* This is another list item']
+        self.assertEqual(markdown_to_blocks(markd_examp), expected)
+
+    def test_block_to_type_01(self):
+        block_ex = "1. - >```### Wow, \n2. * >really!\n3. 4445"
+        self.assertEqual(block_to_block_type(block_ex), "ordered_list")
 
 if __name__ == "__main__":
     unittest.main()

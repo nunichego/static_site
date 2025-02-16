@@ -106,3 +106,29 @@ def text_to_textnodes(text):
                         "**", TextType.BOLD), 
                         "*", TextType.ITALIC), 
                         "`", TextType.CODE)))
+
+def markdown_to_blocks(markdown):
+    result_strings = markdown.split("\n\n")
+    result_strings = [string for string in result_strings if string != ""]
+    return list(map(lambda x: x.strip(), result_strings))
+
+def block_to_block_type(block):
+
+    possible_headings = tuple(["#" * i for i in range(1, 7)])
+    lines = block.split("\n")
+
+    if block.startswith(possible_headings):
+        return "heading"
+    elif block.startswith("```") and block.endswith("```"):
+        return "code"
+    elif all(line.startswith(">") for line in lines):
+        return "quote"
+    elif all((line.startswith("* ") or line.startswith("- ")) for line in lines):
+        return "unordered_list"
+    elif all(line.startswith(f"{(lines.index(line) + 1)}. ") for line in lines):
+        return "ordered_list"
+    else:
+        return "paragraph"
+
+def markdown_to_html(markdown):
+    pass
