@@ -1,5 +1,6 @@
 import unittest
 from markdown_functions import *
+from htmlnode import ParentNode, LeafNode
 from textnode import TextNode, TextType
 
 class TestDelimiter(unittest.TestCase):
@@ -139,6 +140,31 @@ class TestDelimiter(unittest.TestCase):
     def test_block_to_type_01(self):
         block_ex = "1. - >```### Wow, \n2. * >really!\n3. 4445"
         self.assertEqual(block_to_block_type(block_ex), "ordered_list")
+
+    def test_markdown_to_html_01(self):
+        text = '''
+# My Awesome Document
+
+This is a **bold** statement and *italic* emphasis in a paragraph.
+
+> This is a quote block.
+
+## Subtopic
+
+- Unordered list item 1
+- Unordered list item 2
+
+1. Ordered list item 1
+2. Ordered list item 2
+
+Check out [this link](https://www.example.com) for more information.
+
+![Example Image](https://www.example.com/image.png)
+'''
+        result = markdown_to_html_node(text).to_html()
+        expected = '<div><h1>My Awesome Document</h1><p>This is a <b>bold</b> statement and <i>italic</i> emphasis in a paragraph.</p><blockquote>This is a quote block.</blockquote><h2>Subtopic</h2><ul><li>Unordered list item 1</li><li>Unordered list item 2</li></ul><ol><li>Ordered list item 1</li><li>Ordered list item 2</li></ol><p>Check out <a href="https://www.example.com">this link</a> for more information.</p><p><img src="https://www.example.com/image.png" alt="Example Image" /></p></div>'
+        self.assertEqual(result, expected)
+
 
 if __name__ == "__main__":
     unittest.main()

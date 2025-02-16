@@ -1,5 +1,6 @@
 import re
 from textnode import *
+from htmlnode import *
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
@@ -114,7 +115,7 @@ def markdown_to_blocks(markdown):
 
 def block_to_block_type(block):
 
-    possible_headings = tuple(["#" * i for i in range(1, 7)])
+    possible_headings = tuple(["#" * i + " " for i in range(1, 7)])
     lines = block.split("\n")
 
     if block.startswith(possible_headings):
@@ -130,5 +131,64 @@ def block_to_block_type(block):
     else:
         return "paragraph"
 
-def markdown_to_html(markdown):
-    pass
+def markdown_to_html_node(markdown):
+    children = []
+    for block in markdown_to_blocks(markdown):
+        block_type = block_to_block_type(block)
+        if block_type == "heading":
+            children.append(create_heading_node(block))
+        elif block_type == "code":
+            children.append(create_code_node(block))
+        elif block_type == "quote":
+            children.append(create_quote_node(block))
+        elif block_type == "unordered_list":
+            children.append(create_unordered_list_node(block))
+        elif block_type == "ordered_list":
+            children.append(create_ordered_list_node(block))
+        elif block_type == "paragraph":
+            children.append(create_paragraph(block))
+        else:
+            raise Exception("unknown Error")     
+    return ParentNode("div", children)
+
+def create_heading_node(block):
+    heading_level = 1
+    current_prefix = ""
+    for index, prefix in enumerate(tuple(["#" * i for i in range(1, 7)])):
+        if block.startswith(prefix):
+            heading_level = index + 1
+            current_prefix = f"{prefix} "
+    return ParentNode(f"h{heading_level}", text_to_children(block.removeprefix(current_prefix).split("\n")[0]))
+
+def create_unordered_list_node(block):
+    children = []
+    for line in block.split("\n"):
+        clean_line = line.removeprefix("* ").removeprefix("- ").removeprefix("+ ")
+        children.append(ParentNode("li", text_to_children(clean_line)))
+    return ParentNode("ul", children)
+
+def create_quote_node(block):
+    clean_block = "\n".join([line.removeprefix(">").strip() for line in block.split("\n")])
+    children = text_to_children(clean_block)
+    return ParentNode("blockquote", children)
+
+def create_ordered_list_node(block):
+    children = []
+    for line in block.split("\n"):
+        clean_line = line[line.find(". ") + 2:]
+        children.append(ParentNode("li", text_to_children(clean_line)))
+    return ParentNode("ol", children)
+
+def create_paragraph(block):
+    return (ParentNode("p", text_to_children(block)))
+
+def create_code_node(block):
+    clean_block = block.strip("```")
+    children = text_to_children(clean_block)
+    return ParentNode("pre", [ParentNode("code", children)])
+
+def text_to_children(text_line):
+    children = []
+    for node in text_to_textnodes(text_line):
+        children.append(text_node_to_html_node(node))
+    return children
