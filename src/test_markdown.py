@@ -1,5 +1,5 @@
 import unittest
-from delimiter import split_nodes_delimiter
+from markdown_functions import *
 from textnode import TextNode, TextType
 
 class TestDelimiter(unittest.TestCase):
@@ -35,6 +35,20 @@ class TestDelimiter(unittest.TestCase):
             TextNode(" text", TextType.TEXT)
         ]
         self.assertEqual(result3, nodes_result_expected)
+
+    def test_extracting_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        result = (extract_markdown_images(text))
+        expected = [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")]
+        self.assertEqual(result, expected)
+
+
+    def test_extracting_links(self):
+        text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        result = (extract_markdown_links(text))
+        expected = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+        self.assertEqual(result, expected)
+
 
 if __name__ == "__main__":
     unittest.main()
