@@ -1,9 +1,8 @@
-from textnode import *
+from static_to_public import static_to_public
 
 def main():
 
-    test_node = TextNode("This is a test!", TextType.BOLD, "https://example.dev")
-
-    print(test_node)
+    #stat...blic removes /public folder, creates new empty one and copies all from /static to it
+    static_to_public()
 
 main()
