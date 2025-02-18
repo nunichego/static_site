@@ -192,3 +192,10 @@ def text_to_children(text_line):
     for node in text_to_textnodes(text_line):
         children.append(text_node_to_html_node(node))
     return children
+
+def extract_title(markdown):
+    for line in markdown.split("\n"):
+        if line.strip().startswith("# "):
+            return line.strip().strip("# ").strip()
+    raise Exception("no title found")
+

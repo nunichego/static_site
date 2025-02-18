@@ -165,6 +165,11 @@ Check out [this link](https://www.example.com) for more information.
         expected = '<div><h1>My Awesome Document</h1><p>This is a <b>bold</b> statement and <i>italic</i> emphasis in a paragraph.</p><blockquote>This is a quote block.</blockquote><h2>Subtopic</h2><ul><li>Unordered list item 1</li><li>Unordered list item 2</li></ul><ol><li>Ordered list item 1</li><li>Ordered list item 2</li></ol><p>Check out <a href="https://www.example.com">this link</a> for more information.</p><p><img src="https://www.example.com/image.png" alt="Example Image" /></p></div>'
         self.assertEqual(result, expected)
 
+    def test_extract_title(self):
+        text = "what a day\n #guess WHo,\n *No i dont get\n # What?\n"
+        expected = "What?"
+        self.assertEqual(extract_title(text), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
